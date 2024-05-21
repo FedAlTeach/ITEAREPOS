@@ -1,71 +1,26 @@
-# ITEAREPOS
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
+import telebot
+import  requests
+import json
 
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
 
-tr:nth-child(even) {
-    background-color: #dddddd;
-}
-</style>
-</head>
-<body>
 
-<h2>HTML Table</h2>
+myBot = telebot.TeleBot('7075505732:AAH76IP7JpzE1Xr5P_sLsmnfbM3KSaC9z88')
 
-<table>
-  <tr>
-    <th>Company</th>
-    <th>Contact</th>
-    <th>Country</th>
-  </tr>
-  <tr>
-    <td>Alfreds Futterkiste</td>
-    <td>Maria Anders</td>
-    <td>Germany</td>
-  </tr>
-  <tr>
-    <td>Centro comercial Moctezuma</td>
-    <td>Francisco Chang</td>
-    <td>Mexico</td>
-  </tr>
-  <tr>
-    <td>Ernst Handel</td>
-    <td>Roland Mendel</td>
-    <td>Austria</td>
-  </tr>
-  <tr>
-    <td>Island Trading</td>
-    <td>Helen Bennett</td>
-    <td>UK</td>
-  </tr>
-  <tr>
-    <td>Laughing Bacchus Winecellars</td>
-    <td>Yoshi Tannamuri</td>
-    <td>Canada</td>
-  </tr>
-  <tr>
-    <td>Magazzini Alimentari Riuniti</td>
-    <td>Giovanni Rovelli</td>
-    <td>Italy</td>
-  </tr>
-   <tr>
-    <td>My Company</td>
-    <td>Me</td>
-    <td>Ukraine</td>
-  </tr>
-</table>
+@myBot.message_handler(commands=['start'])
+def start(message):
+    myBot.send_message(message.chat.id, 'Hello! its a weather bot', reply_markup='Markdown')
 
-</body>
-</html>
+
+@myBot.message_handler(content_types=['text'])
+def weather(message):
+    city = message.text
+    url = 'https://api.openweathermap.org/data/2.5/weather?q='+city+'&units=metric&lang=ru&appid=50ea35c7b6eded0eb9dc2a89a662b482'
+    jsondata = requests.get(url).json()
+    temp = jsondata['main']['temp']
+    clouds = jsondata['clouds']['all']
+    usertep = 'Temp in you city  is' +str(temp)+ 'C'
+    # usercloud ='Clouds   ' +clouds
+    myBot.send_message(message.chat.id, usertep)
+    # myBot.send_message(message.chat.id, usercloud)
+
+myBot.polling()
